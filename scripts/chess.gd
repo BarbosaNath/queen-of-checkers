@@ -32,6 +32,11 @@ var eated_piece: Vector2
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	start_board()
+	display_board()
+
+
+func start_board() -> void:
 	board.append([1, 0, 1, 0, 1, 0, 1, 0])
 	board.append([0, 1, 0, 1, 0, 1, 0, 1])
 	board.append([1, 0, 1, 0, 1, 0, 1, 0])
@@ -40,8 +45,6 @@ func _ready() -> void:
 	board.append([0, -1, 0, -1, 0, -1, 0, -1])
 	board.append([-1, 0, -1, 0, -1, 0, -1, 0])
 	board.append([0, -1, 0, -1, 0, -1, 0, -1])
-
-	display_board()
 
 func display_board():
 
