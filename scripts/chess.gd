@@ -1,7 +1,10 @@
 extends Sprite2D
 
+# Constants
 const BOARD_SIZE = 8
 const CELL_WIDTH = 250
+const PIECES_SCALE = 0.1
+const DOTS_SCALE = 0.05
 
 const TEXTURE_HOLDER = preload("res://scenes/texture_holder.tscn")
 
@@ -10,11 +13,12 @@ const BLACK_QUEEN = preload("res://assets/black_queen.png")
 const WHITE_PIECE = preload("res://assets/white_piece.png")
 const WHITE_QUEEN = preload("res://assets/white_queen.png")
 
+# References
 @onready var pieces = $pieces
 @onready var dots = $dots
 @onready var turn = $turn
 
-#variables
+# Variables
 # -num(black) 0 +num(white)
 
 enum GameState {
@@ -30,6 +34,7 @@ var eating_moves = []
 var selected_piece: Vector2
 var eated_piece: Vector2
 
+# Methods
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	start_board()
@@ -55,7 +60,7 @@ func display_board():
 		for j in BOARD_SIZE:
 			var holder = TEXTURE_HOLDER.instantiate()
 			pieces.add_child(holder)
-			holder.apply_scale(Vector2(0.1,0.1))
+			holder.apply_scale(Vector2(PIECES_SCALE,PIECES_SCALE))
 			holder.global_position = Vector2(j * CELL_WIDTH + (CELL_WIDTH / 2), -i * CELL_WIDTH - (CELL_WIDTH / 2))
 					
 			match board[i][j]:
@@ -69,12 +74,14 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton && event.is_pressed():
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if is_mouse_out(): return
+
 			var cell_x = snapped(get_global_mouse_position().x, 0) /  CELL_WIDTH
 			var cell_y = abs(snapped(get_global_mouse_position().y, 0)) /  CELL_WIDTH
 
 			
 			if state==GameState.SELECT_MOVE:
-				if (is_white_turn && board[cell_y][cell_x] > 0 || !is_white_turn && board[cell_y][cell_x] < 0):
+				if (is_white_turn && board[cell_y][cell_x] > 0 
+				|| !is_white_turn && board[cell_y][cell_x] < 0):
 					selected_piece = Vector2(cell_y, cell_x)
 					show_options()
 					state = GameState.CONFIRM_MOVE
@@ -210,7 +217,7 @@ func show_dots():
 	for move in moves:
 		var dot = TEXTURE_HOLDER.instantiate()
 		dots.add_child(dot)
-		dot.apply_scale(Vector2(0.05,0.05))
+		dot.apply_scale(Vector2(DOTS_SCALE,DOTS_SCALE))
 		dot.global_position = Vector2(move.y * CELL_WIDTH + (CELL_WIDTH / 2), -move.x * CELL_WIDTH - (CELL_WIDTH / 2))
 		dot.texture = WHITE_PIECE if is_white_turn else BLACK_PIECE
 
@@ -218,7 +225,7 @@ func show_dots():
 		var move = eat_move['position']
 		var dot = TEXTURE_HOLDER.instantiate()
 		dots.add_child(dot)
-		dot.apply_scale(Vector2(0.05,0.05))
+		dot.apply_scale(Vector2(DOTS_SCALE,DOTS_SCALE))
 		dot.global_position = Vector2(move.y * CELL_WIDTH + (CELL_WIDTH / 2), -move.x * CELL_WIDTH - (CELL_WIDTH / 2))
 		dot.texture = WHITE_PIECE if is_white_turn else BLACK_PIECE
 
