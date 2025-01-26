@@ -158,11 +158,14 @@ func is_valid_position(pos : Vector2):
 func is_empty(pos : Vector2):
 	return board[pos.x][pos.y] == 0
 
+func is_white_piece(pos : Vector2):
+	return board[pos.x][pos.y] > 0
+
+func is_black_piece(pos : Vector2):
+	return board[pos.x][pos.y] < 0
+
 func is_enemy(pos : Vector2):
-	if is_white_turn:
-		return board[pos.x][pos.y] < 0
-	else:
-		return board[pos.x][pos.y] > 0
+	return is_black_piece(pos) if is_white_turn else is_white_piece(pos)
 
 func pieces_moves():
 	var _moves = []
@@ -178,10 +181,10 @@ func pieces_moves():
 		if !is_valid_position(pos): continue
 
 		if is_empty(pos):
-			if is_white_turn && board[selected_piece.x][selected_piece.y] > 0:
+			if is_white_turn && is_white_piece(selected_piece):
 				if direction in white_directions:
 					_moves.append(pos)
-			elif !is_white_turn && board[selected_piece.x][selected_piece.y] < 0:
+			elif !is_white_turn && is_black_piece(selected_piece):
 				if direction in black_directions:
 					_moves.append(pos)
 
