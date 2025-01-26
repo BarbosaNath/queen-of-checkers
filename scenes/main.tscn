@@ -5,8 +5,10 @@
 [node name="Main" type="Node2D"]
 
 [node name="board" parent="." instance=ExtResource("1_817an")]
+position = Vector2(1000, -1000)
 
 [node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(1000, -1000)
 zoom = Vector2(0.25, 0.25)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
