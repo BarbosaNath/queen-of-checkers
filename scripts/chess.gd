@@ -33,6 +33,7 @@ var moves = []
 var eating_moves = []
 var selected_piece: Vector2
 var eated_piece: Vector2
+var is_multijumping: bool
 
 # Methods
 # Called when the node enters the scene tree for the first time.
@@ -61,7 +62,7 @@ func display_board():
 			var holder = TEXTURE_HOLDER.instantiate()
 			pieces.add_child(holder)
 			holder.apply_scale(Vector2(PIECES_SCALE,PIECES_SCALE))
-			holder.global_position = Vector2(j * CELL_WIDTH + (CELL_WIDTH / 2), -i * CELL_WIDTH - (CELL_WIDTH / 2))
+			holder.global_position = Vector2(j * CELL_WIDTH + (CELL_WIDTH / 2.0), -i * CELL_WIDTH - (CELL_WIDTH / 2.0))
 					
 			match board[i][j]:
 				1:  holder.texture = WHITE_PIECE
@@ -77,12 +78,29 @@ func _input(event: InputEvent) -> void:
 
 			var cell_x = snapped(get_global_mouse_position().x, 0) /  CELL_WIDTH
 			var cell_y = abs(snapped(get_global_mouse_position().y, 0)) /  CELL_WIDTH
+			var cell = Vector2(cell_y, cell_x)
 
-			
+			if is_multijumping:
+				var _can_continue = false
+				for move in eating_moves:
+					var _position = move['position']
+					if _position == cell: 
+						_can_continue = true
+						break
+				if cell == selected_piece:
+					_can_continue = true
+
+				print(_can_continue)
+				if !_can_continue:
+					is_white_turn = !is_white_turn
+					is_multijumping = false
+					state=GameState.SELECT_MOVE
+					return
+
 			if state==GameState.SELECT_MOVE:
-				if (is_white_turn && board[cell_y][cell_x] > 0 
-				|| !is_white_turn && board[cell_y][cell_x] < 0):
-					selected_piece = Vector2(cell_y, cell_x)
+				if (is_white_turn && is_white_piece(cell) 
+				|| !is_white_turn && is_black_piece(cell)):
+					selected_piece = cell
 					show_options()
 					state = GameState.CONFIRM_MOVE
 			elif state==GameState.CONFIRM_MOVE: 
@@ -91,7 +109,7 @@ func _input(event: InputEvent) -> void:
 
 func show_options():
 	var move_types = get_moves()
-	moves = move_types['moves']
+	moves = move_types['moves'] if !is_multijumping else []
 	eating_moves = move_types['eating_moves'] 
 	if moves == [] && eating_moves == []:
 		state = GameState.SELECT_MOVE
@@ -127,12 +145,11 @@ func set_move(cell_y, cell_x):
 
 			var _eat_moves = queen_moves()['eating_moves'] if is_queen else pieces_moves()['eating_moves']
 			if _eat_moves == []:
+				is_multijumping = false
 				is_white_turn = !is_white_turn
 				break
 
-			moves = []
-			eating_moves = _eat_moves
-			show_dots()
+			is_multijumping = true
 
 	delete_dots()
 	state = GameState.SELECT_MOVE	
@@ -221,7 +238,7 @@ func show_dots():
 		var dot = TEXTURE_HOLDER.instantiate()
 		dots.add_child(dot)
 		dot.apply_scale(Vector2(DOTS_SCALE,DOTS_SCALE))
-		dot.global_position = Vector2(move.y * CELL_WIDTH + (CELL_WIDTH / 2), -move.x * CELL_WIDTH - (CELL_WIDTH / 2))
+		dot.global_position = Vector2(move.y * CELL_WIDTH + (CELL_WIDTH / 2.0), -move.x * CELL_WIDTH - (CELL_WIDTH / 2.0))
 		dot.texture = WHITE_PIECE if is_white_turn else BLACK_PIECE
 
 	for eat_move in eating_moves:
@@ -229,12 +246,10 @@ func show_dots():
 		var dot = TEXTURE_HOLDER.instantiate()
 		dots.add_child(dot)
 		dot.apply_scale(Vector2(DOTS_SCALE,DOTS_SCALE))
-		dot.global_position = Vector2(move.y * CELL_WIDTH + (CELL_WIDTH / 2), -move.x * CELL_WIDTH - (CELL_WIDTH / 2))
+		dot.global_position = Vector2(move.y * CELL_WIDTH + (CELL_WIDTH / 2.0), -move.x * CELL_WIDTH - (CELL_WIDTH / 2.0))
 		dot.texture = WHITE_PIECE if is_white_turn else BLACK_PIECE
 
 
 func is_mouse_out():
-	return (
-			get_global_mouse_position().x < 0 || get_global_mouse_position().x > (CELL_WIDTH * BOARD_SIZE)
-		||  get_global_mouse_position().y > 0 || get_global_mouse_position().y < -(CELL_WIDTH * BOARD_SIZE)
-		)
+	return (get_global_mouse_position().x < 0 || get_global_mouse_position().x > (CELL_WIDTH * BOARD_SIZE)
+		||  get_global_mouse_position().y > 0 || get_global_mouse_position().y < -(CELL_WIDTH * BOARD_SIZE))
