@@ -272,3 +272,29 @@ func show_dots():
 func is_mouse_out():
 	return (get_global_mouse_position().x < 0 || get_global_mouse_position().x > (CELL_WIDTH * BOARD_SIZE)
 		||  get_global_mouse_position().y > 0 || get_global_mouse_position().y < -(CELL_WIDTH * BOARD_SIZE))
+
+
+#Parte de IA
+func is_gameover():
+	pass
+
+func get_current_winner(_position):
+	pass
+
+func minimax(_position, _depth, _max_player):
+	if _depth == 0 || is_gameover() in _position:
+		return get_current_winner(_position)
+	
+	if _max_player:
+		var max_eval = float("-inf")
+		for child in position:
+			var _eval = minimax(child, _depth-1, false)
+			max_eval = max(max_eval, _eval)
+			return max_eval
+	
+	else:
+		var min_eval = float("-inf")
+		for child in position:
+			var _eval = minimax(child, _depth-1, true)
+			min_eval = min(min_eval, _eval)
+			return min_eval
