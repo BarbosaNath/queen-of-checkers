@@ -43,6 +43,7 @@ func _ready() -> void:
 
 
 func start_board() -> void:
+	board = []
 	board.append([1, 0, 1, 0, 1, 0, 1, 0])
 	board.append([0, 1, 0, 1, 0, 1, 0, 1])
 	board.append([1, 0, 1, 0, 1, 0, 1, 0])
@@ -159,6 +160,10 @@ func set_move(cell_y, cell_x):
 			
 	delete_dots()
 	state = GameState.SELECT_MOVE	
+	if (is_gameover()):
+		start_board()
+		display_board()
+		is_white_turn=true
 
 func get_moves(): 
 	var _moves = []
@@ -274,9 +279,19 @@ func is_mouse_out():
 		||  get_global_mouse_position().y > 0 || get_global_mouse_position().y < -(CELL_WIDTH * BOARD_SIZE))
 
 
+#TODO: Indicador de jogador. Vencedor atual. Calcular possiveis açoes. ^^
+
 #Parte de IA
 func is_gameover():
-	pass
+	var _quantity_white = 0
+	var _quantity_black = 0
+	
+	for row in board:
+		for space in row:
+			_quantity_white += 1 if space > 0 else 0
+			_quantity_black += 1 if space < 0 else 0
+
+	return _quantity_white == 0 || _quantity_black == 0
 
 func get_current_winner(_position):
 	pass
