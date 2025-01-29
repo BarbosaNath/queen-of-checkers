@@ -90,7 +90,6 @@ func _input(event: InputEvent) -> void:
 				if cell == selected_piece:
 					_can_continue = true
 
-				print(_can_continue)
 				if !_can_continue:
 					is_white_turn = !is_white_turn
 					is_multijumping = false
@@ -122,35 +121,43 @@ func delete_dots():
 		dot.queue_free()
 
 func set_move(cell_y, cell_x):
-	for move in moves:
-		if move.x == cell_y && move.y == cell_x:
-			board[cell_y][cell_x] = board[selected_piece.x][selected_piece.y]
-			board[selected_piece.x][selected_piece.y] = 0
-			is_white_turn = !is_white_turn
-			display_board()
-			break
-
+	print(cell_y, cell_x)
 	for eat_move in eating_moves:
 		var eat_move_position = eat_move['position']
 		if eat_move_position.x == cell_y && eat_move_position.y == cell_x:
-			var is_queen = abs(board[selected_piece.x][selected_piece.y]) == 2
 			board[cell_y][cell_x] = board[selected_piece.x][selected_piece.y]
 			board[selected_piece.x][selected_piece.y] = 0
 			board[eat_move['eaten_piece'].x][eat_move['eaten_piece'].y] = 0
 
 			delete_dots()
-			display_board()
 
 			selected_piece = Vector2(eat_move_position.x, eat_move_position.y)
 
-			var _eat_moves = queen_moves()['eating_moves'] if is_queen else pieces_moves()['eating_moves']
+			if (is_white_piece(eat_move_position) && eat_move_position.x == 7
+			||  is_black_piece(eat_move_position) && eat_move_position.x == 0):
+				board[eat_move_position.x][eat_move_position.y] = 2 if is_white_piece(eat_move_position) else -2
+
+			var _eat_moves = get_moves()['eating_moves']
 			if _eat_moves == []:
 				is_multijumping = false
 				is_white_turn = !is_white_turn
+				display_board()
 				break
 
 			is_multijumping = true
+			display_board()
 
+	for move in moves:
+		if move.x == cell_y && move.y == cell_x:
+			board[cell_y][cell_x] = board[selected_piece.x][selected_piece.y]
+			board[selected_piece.x][selected_piece.y] = 0
+			is_white_turn = !is_white_turn
+			if (is_white_piece(move) && move.x == 7
+			||  is_black_piece(move) && move.x == 0):
+				board[move.x][move.y] = 2 if is_white_piece(move) else -2
+			display_board()
+			break
+			
 	delete_dots()
 	state = GameState.SELECT_MOVE	
 
@@ -162,7 +169,10 @@ func get_moves():
 			var move_types = pieces_moves()
 			_moves = move_types['moves']
 			_eating_moves = move_types['eating_moves']
-		2: _moves = queen_moves()
+		2: 
+			var move_types = queen_moves()
+			_moves = move_types['moves']
+			_eating_moves = move_types['eating_moves']
 
 	return {
 			'moves': _moves,
@@ -173,13 +183,13 @@ func is_valid_position(pos : Vector2):
 	return pos.x >= 0 && pos.x < BOARD_SIZE && pos.y >= 0 && pos.y < BOARD_SIZE
 
 func is_empty(pos : Vector2):
-	return board[pos.x][pos.y] == 0
+	return is_valid_position(pos) && board[pos.x][pos.y] == 0
 
 func is_white_piece(pos : Vector2):
-	return board[pos.x][pos.y] > 0
+	return is_valid_position(pos) && board[pos.x][pos.y] > 0
 
 func is_black_piece(pos : Vector2):
-	return board[pos.x][pos.y] < 0
+	return is_valid_position(pos) && board[pos.x][pos.y] < 0
 
 func is_enemy(pos : Vector2):
 	return is_black_piece(pos) if is_white_turn else is_white_piece(pos)
@@ -217,6 +227,7 @@ func pieces_moves():
 
 func queen_moves():
 	var _moves = []
+	var _eating_moves = []
 	var directions = [Vector2(1,1), Vector2(1,-1), Vector2(-1,1), Vector2(-1,-1)]
 	for direction in directions:
 		var pos = selected_piece
@@ -226,11 +237,20 @@ func queen_moves():
 			if is_empty(pos):
 				_moves.append(pos)
 			elif is_enemy(pos):
-				pos += direction
-				if is_valid_position(pos) && is_empty(pos):
-					_moves.append(pos)
+				var _eaten_piece = pos
+				while is_valid_position(pos): 
+					pos += direction
+					if is_valid_position(pos) && is_empty(pos):
+						_eating_moves.append({'position':pos, 'eaten_piece': _eaten_piece })
+					else: break
+				break
+			else: break
+			pos += direction
 				
-	return _moves
+	return {
+			'moves': _moves,
+			'eating_moves':_eating_moves
+		}
 
 
 func show_dots():
