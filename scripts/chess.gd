@@ -121,7 +121,6 @@ func delete_dots():
 		dot.queue_free()
 
 func set_move(cell_y, cell_x):
-	print(cell_y, cell_x)
 	for eat_move in eating_moves:
 		var eat_move_position = eat_move['position']
 		if eat_move_position.x == cell_y && eat_move_position.y == cell_x:
