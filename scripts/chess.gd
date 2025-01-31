@@ -292,24 +292,3 @@ func is_gameover():
 			_quantity_black += 1 if space < 0 else 0
 
 	return _quantity_white == 0 || _quantity_black == 0
-
-func get_current_winner(_position):
-	pass
-
-func minimax(_position, _depth, _max_player):
-	if _depth == 0 || is_gameover() in _position:
-		return get_current_winner(_position)
-	
-	if _max_player:
-		var max_eval = float("-inf")
-		for child in position:
-			var _eval = minimax(child, _depth-1, false)
-			max_eval = max(max_eval, _eval)
-			return max_eval
-	
-	else:
-		var min_eval = float("-inf")
-		for child in position:
-			var _eval = minimax(child, _depth-1, true)
-			min_eval = min(min_eval, _eval)
-			return min_eval
