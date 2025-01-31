@@ -21,15 +21,15 @@ const WHITE_QUEEN = preload("res://assets/white_queen.png")
 # Variables
 # -num(black) 0 +num(white)
 
-enum GameState {
+enum {
 	SELECT_MOVE,
 	CONFIRM_MOVE,
 }
 
-var board: Array
+var gameState: BoardState
 var is_white_turn: bool = true
-var state: GameState = GameState.SELECT_MOVE
-var moves = []
+var playerState = SELECT_MOVE
+var moves: Array[Dictionary] = []
 var eating_moves = []
 var selected_piece: Vector2
 var eated_piece: Vector2
@@ -43,15 +43,16 @@ func _ready() -> void:
 
 
 func start_board() -> void:
-	board = []
-	board.append([1, 0, 1, 0, 1, 0, 1, 0])
-	board.append([0, 1, 0, 1, 0, 1, 0, 1])
-	board.append([1, 0, 1, 0, 1, 0, 1, 0])
-	board.append([0, 0, 0, 0, 0, 0, 0, 0])
-	board.append([0, 0, 0, 0, 0, 0, 0, 0])
-	board.append([0, -1, 0, -1, 0, -1, 0, -1])
-	board.append([-1, 0, -1, 0, -1, 0, -1, 0])
-	board.append([0, -1, 0, -1, 0, -1, 0, -1])
+	var board_array: Array[Array] = []
+	board_array.append([1, 0, 1, 0, 1, 0, 1, 0])
+	board_array.append([0, 1, 0, 1, 0, 1, 0, 1])
+	board_array.append([1, 0, 1, 0, 1, 0, 1, 0])
+	board_array.append([0, 0, 0, 0, 0, 0, 0, 0])
+	board_array.append([0, 0, 0, 0, 0, 0, 0, 0])
+	board_array.append([0, -1, 0, -1, 0, -1, 0, -1])
+	board_array.append([-1, 0, -1, 0, -1, 0, -1, 0])
+	board_array.append([0, -1, 0, -1, 0, -1, 0, -1])
+	gameState = BoardState.new(board_array)
 
 func display_board():
 
@@ -65,7 +66,7 @@ func display_board():
 			holder.apply_scale(Vector2(PIECES_SCALE,PIECES_SCALE))
 			holder.global_position = Vector2(j * CELL_WIDTH + (CELL_WIDTH / 2.0), -i * CELL_WIDTH - (CELL_WIDTH / 2.0))
 					
-			match board[i][j]:
+			match gameState.board[i][j]:
 				1:  holder.texture = WHITE_PIECE
 				-1: holder.texture = BLACK_PIECE
 				2:  holder.texture = WHITE_QUEEN
@@ -81,198 +82,42 @@ func _input(event: InputEvent) -> void:
 			var cell_y = abs(snapped(get_global_mouse_position().y, 0)) /  CELL_WIDTH
 			var cell = Vector2(cell_y, cell_x)
 
-			if is_multijumping:
-				var _can_continue = false
-				for move in eating_moves:
-					var _position = move['position']
-					if _position == cell: 
-						_can_continue = true
-						break
-				if cell == selected_piece:
-					_can_continue = true
-
-				if !_can_continue:
-					is_white_turn = !is_white_turn
-					is_multijumping = false
-					state=GameState.SELECT_MOVE
-					return
-
-			if state==GameState.SELECT_MOVE:
+			if playerState==SELECT_MOVE:
 				if (is_white_turn && is_white_piece(cell) 
 				|| !is_white_turn && is_black_piece(cell)):
 					selected_piece = cell
 					show_options()
-					state = GameState.CONFIRM_MOVE
-			elif state==GameState.CONFIRM_MOVE: 
-				set_move(cell_y, cell_x)
+					playerState = CONFIRM_MOVE
+					
+			elif playerState==CONFIRM_MOVE:
+				var movement = BoardState.get_move_by_position(moves, cell)
+				if 'final_position' in movement: 
+					gameState = gameState.move(movement)
+					is_white_turn = !is_white_turn
+					gameState.is_white_turn = is_white_turn
+				playerState=SELECT_MOVE
+				display_board()
+				delete_dots()
 
 
 func show_options():
-	var move_types = get_moves()
-	moves = move_types['moves'] if !is_multijumping else []
-	eating_moves = move_types['eating_moves'] 
-	if moves == [] && eating_moves == []:
-		state = GameState.SELECT_MOVE
+	moves = gameState.get_moves(selected_piece)
+	if moves == []:
+		playerState = SELECT_MOVE
 		return
 	show_dots()
-
-
-func delete_dots():
-	for dot in dots.get_children():
-		dot.queue_free()
-
-func set_move(cell_y, cell_x):
-	for eat_move in eating_moves:
-		var eat_move_position = eat_move['position']
-		if eat_move_position.x == cell_y && eat_move_position.y == cell_x:
-			board[cell_y][cell_x] = board[selected_piece.x][selected_piece.y]
-			board[selected_piece.x][selected_piece.y] = 0
-			board[eat_move['eaten_piece'].x][eat_move['eaten_piece'].y] = 0
-
-			delete_dots()
-
-			selected_piece = Vector2(eat_move_position.x, eat_move_position.y)
-
-			if (is_white_piece(eat_move_position) && eat_move_position.x == 7
-			||  is_black_piece(eat_move_position) && eat_move_position.x == 0):
-				board[eat_move_position.x][eat_move_position.y] = 2 if is_white_piece(eat_move_position) else -2
-
-			var _eat_moves = get_moves()['eating_moves']
-			if _eat_moves == []:
-				is_multijumping = false
-				is_white_turn = !is_white_turn
-				display_board()
-				break
-
-			is_multijumping = true
-			display_board()
-
-	for move in moves:
-		if move.x == cell_y && move.y == cell_x:
-			board[cell_y][cell_x] = board[selected_piece.x][selected_piece.y]
-			board[selected_piece.x][selected_piece.y] = 0
-			is_white_turn = !is_white_turn
-			if (is_white_piece(move) && move.x == 7
-			||  is_black_piece(move) && move.x == 0):
-				board[move.x][move.y] = 2 if is_white_piece(move) else -2
-			display_board()
-			break
-			
-	delete_dots()
-	state = GameState.SELECT_MOVE	
-	if (is_gameover()):
-		start_board()
-		display_board()
-		is_white_turn=true
-
-func get_moves(): 
-	var _moves = []
-	var _eating_moves = []
-	match (abs(board[selected_piece.x][selected_piece.y])):
-		1: 
-			var move_types = pieces_moves()
-			_moves = move_types['moves']
-			_eating_moves = move_types['eating_moves']
-		2: 
-			var move_types = queen_moves()
-			_moves = move_types['moves']
-			_eating_moves = move_types['eating_moves']
-
-	return {
-			'moves': _moves,
-			'eating_moves':_eating_moves
-		}
-	
-func is_valid_position(pos : Vector2):
-	return pos.x >= 0 && pos.x < BOARD_SIZE && pos.y >= 0 && pos.y < BOARD_SIZE
-
-func is_empty(pos : Vector2):
-	return is_valid_position(pos) && board[pos.x][pos.y] == 0
-
-func is_white_piece(pos : Vector2):
-	return is_valid_position(pos) && board[pos.x][pos.y] > 0
-
-func is_black_piece(pos : Vector2):
-	return is_valid_position(pos) && board[pos.x][pos.y] < 0
-
-func is_enemy(pos : Vector2):
-	return is_black_piece(pos) if is_white_turn else is_white_piece(pos)
-
-func pieces_moves():
-	var _moves = []
-	var _eating_moves = []
-
-	var white_directions = [Vector2(1,1), Vector2(1,-1)]
-	var black_directions = [Vector2(-1,-1), Vector2(-1,1)]
-	var directions = [Vector2(1,1), Vector2(1,-1), Vector2(-1,1), Vector2(-1,-1)]
-	for direction in directions:
-		var pos = selected_piece
-		pos += direction
-		
-		if !is_valid_position(pos): continue
-
-		if is_empty(pos):
-			if is_white_turn && is_white_piece(selected_piece):
-				if direction in white_directions:
-					_moves.append(pos)
-			elif !is_white_turn && is_black_piece(selected_piece):
-				if direction in black_directions:
-					_moves.append(pos)
-
-		elif is_enemy(pos):
-			pos += direction
-			if is_valid_position(pos) && is_empty(pos):
-				_eating_moves.append({'position':pos, 'eaten_piece': pos - direction })
-
-	return {
-			'moves': _moves,
-			'eating_moves':_eating_moves
-		}
-
-func queen_moves():
-	var _moves = []
-	var _eating_moves = []
-	var directions = [Vector2(1,1), Vector2(1,-1), Vector2(-1,1), Vector2(-1,-1)]
-	for direction in directions:
-		var pos = selected_piece
-		pos += direction
-		
-		while is_valid_position(pos):
-			if is_empty(pos):
-				_moves.append(pos)
-			elif is_enemy(pos):
-				var _eaten_piece = pos
-				while is_valid_position(pos): 
-					pos += direction
-					if is_valid_position(pos) && is_empty(pos):
-						_eating_moves.append({'position':pos, 'eaten_piece': _eaten_piece })
-					else: break
-				break
-			else: break
-			pos += direction
-				
-	return {
-			'moves': _moves,
-			'eating_moves':_eating_moves
-		}
-
 
 func show_dots():
 	for move in moves:
 		var dot = TEXTURE_HOLDER.instantiate()
 		dots.add_child(dot)
 		dot.apply_scale(Vector2(DOTS_SCALE,DOTS_SCALE))
-		dot.global_position = Vector2(move.y * CELL_WIDTH + (CELL_WIDTH / 2.0), -move.x * CELL_WIDTH - (CELL_WIDTH / 2.0))
+		dot.global_position = Vector2(move['final_position'].y * CELL_WIDTH + (CELL_WIDTH / 2.0), -move['final_position'].x * CELL_WIDTH - (CELL_WIDTH / 2.0))
 		dot.texture = WHITE_PIECE if is_white_turn else BLACK_PIECE
 
-	for eat_move in eating_moves:
-		var move = eat_move['position']
-		var dot = TEXTURE_HOLDER.instantiate()
-		dots.add_child(dot)
-		dot.apply_scale(Vector2(DOTS_SCALE,DOTS_SCALE))
-		dot.global_position = Vector2(move.y * CELL_WIDTH + (CELL_WIDTH / 2.0), -move.x * CELL_WIDTH - (CELL_WIDTH / 2.0))
-		dot.texture = WHITE_PIECE if is_white_turn else BLACK_PIECE
-
+func delete_dots():
+	for dot in dots.get_children():
+		dot.queue_free()
 
 func is_mouse_out():
 	return (get_global_mouse_position().x < 0 || get_global_mouse_position().x > (CELL_WIDTH * BOARD_SIZE)
@@ -281,12 +126,11 @@ func is_mouse_out():
 
 #TODO: Indicador de jogador. Vencedor atual. Calcular possiveis açoes. ^^
 
-#Parte de IA
 func is_gameover():
 	var _quantity_white = 0
 	var _quantity_black = 0
 	
-	for row in board:
+	for row in gameState.board:
 		for space in row:
 			_quantity_white += 1 if space > 0 else 0
 			_quantity_black += 1 if space < 0 else 0
