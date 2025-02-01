@@ -30,10 +30,8 @@ var gameState: BoardState
 var is_white_turn: bool = true
 var playerState = SELECT_MOVE
 var moves: Array[Dictionary] = []
-var eating_moves = []
 var selected_piece: Vector2
-var eated_piece: Vector2
-var is_multijumping: bool
+@export var is_against_ai: bool = true
 
 # Methods
 # Called when the node enters the scene tree for the first time.
@@ -99,6 +97,12 @@ func _input(event: InputEvent) -> void:
 						gameState.board[cell.x][cell.y] = -2
 					is_white_turn = !is_white_turn
 					gameState.is_white_turn = is_white_turn
+
+					if (!is_white_turn && is_against_ai):
+						var result = Minimax.minimax(gameState, 5, false)
+						gameState = result[1][0]
+						is_white_turn = true
+						gameState.is_white_turn = true
 				playerState=SELECT_MOVE
 				display_board()
 				delete_dots()
@@ -137,14 +141,3 @@ func is_black_piece(pos : Vector2):
 	return is_valid_position(pos) && gameState.board[pos.x][pos.y] < 0
 	
 #TODO: Indicador de jogador. Vencedor atual. Calcular possiveis açoes. ^^
-
-func is_gameover():
-	var _quantity_white = 0
-	var _quantity_black = 0
-	
-	for row in gameState.board:
-		for space in row:
-			_quantity_white += 1 if space > 0 else 0
-			_quantity_black += 1 if space < 0 else 0
-
-	return _quantity_white == 0 || _quantity_black == 0
