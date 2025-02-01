@@ -101,15 +101,22 @@ func get_moves(piece: Vector2):
 # 	return _eating_moves + _normal_moves
 
 # TODO: Fix multijump and eating pieces
-func pieces_moves(piece: Vector2) -> Array[Dictionary]:
+func pieces_moves(piece: Vector2, multijump: bool = false) -> Array[Dictionary]:
 	var normal_moves: Array[Dictionary] = []
 	var eating_moves: Array[Dictionary] = []
 
 	var directions = [Vector2(1, 1), Vector2(1, -1), Vector2(-1, 1), Vector2(-1, -1)]
+	
+	var valid_directions: Array[Vector2]
+
+	if (is_white_piece(piece)):
+		valid_directions = [Vector2(1, 1), Vector2(1, -1)]
+	elif (is_black_piece(piece)):
+		valid_directions = [Vector2(-1, 1), Vector2(-1, -1)]
 
 	for direction in directions:
 		var pos = piece + direction
-		if is_valid_position(pos) and is_empty(pos):
+		if !multijump && is_valid_position(pos) && is_empty(pos) && direction in valid_directions:
 			normal_moves.append({
 				'initial_position': piece,
 				'final_position': pos,
@@ -121,56 +128,65 @@ func pieces_moves(piece: Vector2) -> Array[Dictionary]:
 			if is_valid_position(eat_pos) and is_empty(eat_pos):
 				var eaten_pieces = [pos]
 				
-				var new_board_state = move({
+				eating_moves.append({
 					'initial_position': piece,
 					'final_position': eat_pos,
 					'eaten_pieces': eaten_pieces
 				})
+
+				var multijump_state = move({
+					'initial_position': piece,
+					'final_position': eat_pos,
+					'eaten_pieces': eaten_pieces
+				});
+				var multijump_moves = multijump_state.pieces_moves(eat_pos, true)
+				for movement in multijump_moves:
+					movement['initial_position'] = piece
+					movement['eaten_pieces'] += eaten_pieces
+				eating_moves = multijump_moves + eating_moves
 				
-				var subsequent_moves = new_board_state.get_moves(eat_pos)
-				if subsequent_moves.size() > 0:
-					for subsequent_move in subsequent_moves:
-						eating_moves.append({
-							'initial_position': piece,
-							'final_position': subsequent_move['final_position'],
-							'eaten_pieces': eaten_pieces + subsequent_move['eaten_pieces']
-						})
-				else:
+				
+	return eating_moves if eating_moves.size() > 0 else normal_moves
+
+
+func queen_moves(piece: Vector2, multijump: bool = false):
+	var normal_moves: Array[Dictionary] = []
+	var eating_moves: Array[Dictionary] = []
+
+	var directions = [Vector2(1, 1), Vector2(1, -1), Vector2(-1, 1), Vector2(-1, -1)]
+
+	for direction in directions:
+		var pos = piece + direction
+		while is_valid_position(pos):
+			if !multijump && is_empty(pos):
+				normal_moves.append({
+					'initial_position': piece,
+					'final_position': pos,
+					'eaten_pieces': []
+				})
+
+			elif is_enemy(pos):
+				var eat_pos = pos + direction
+				if is_valid_position(eat_pos) and is_empty(eat_pos):
+					var eaten_pieces = [pos]
+					
 					eating_moves.append({
 						'initial_position': piece,
 						'final_position': eat_pos,
 						'eaten_pieces': eaten_pieces
 					})
 
-	return eating_moves if eating_moves.size() > 0 else normal_moves
-
-
-func queen_moves(piece: Vector2):
-	var _normal_moves = []
-	var _eating_moves = []
-	var directions = [Vector2(1, 1), Vector2(1, -1), Vector2(-1, 1), Vector2(-1, -1)]
-	for direction in directions:
-		var pos = piece
-		pos += direction
-		
-		while is_valid_position(pos):
-			if is_empty(pos):
-				_normal_moves.append({'final_position': pos, 'eaten_pieces': []})
-
-			var _eaten_pieces = []
-			while is_enemy(pos):
-				var _eaten_piece = pos
-				pos += direction
-				while is_valid_position(pos):
-					_eaten_pieces.append(_eaten_piece)
-					var new_board_state = move({'initial_position': piece, 'final_position': pos, 'eaten_pieces': _eaten_pieces})
-					var subsequent_moves = new_board_state.get_moves(pos)
-					if subsequent_moves.size() > 0:
-						for subsequent_move in subsequent_moves:
-							_eating_moves.append({'initial_position': piece, 'final_position': subsequent_move['final_position'], 'eaten_pieces': _eaten_pieces + subsequent_move['eaten_pieces']})
-					else:
-						_eating_moves.append({'initial_position': piece, 'final_position': pos, 'eaten_pieces': _eaten_pieces})
-
-			pos += direction
+					var multijump_state = move({
+						'initial_position': piece,
+						'final_position': eat_pos,
+						'eaten_pieces': eaten_pieces
+					});
+					var multijump_moves = multijump_state.pieces_moves(eat_pos, true)
+					for movement in multijump_moves:
+						movement['initial_position'] = piece
+						movement['eaten_pieces'] += eaten_pieces
+					eating_moves = multijump_moves + eating_moves
+			pos = pos + direction
+					
 				
-	return _eating_moves + _normal_moves
+	return eating_moves if eating_moves.size() > 0 else normal_moves

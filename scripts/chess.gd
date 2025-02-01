@@ -93,6 +93,10 @@ func _input(event: InputEvent) -> void:
 				var movement = BoardState.get_move_by_position(moves, cell)
 				if 'final_position' in movement: 
 					gameState = gameState.move(movement)
+					if (cell_y == 7 && gameState.is_white_piece(cell)):
+						gameState.board[cell.x][cell.y] = 2
+					elif (cell_y == 0 && gameState.is_black_piece(cell)):
+						gameState.board[cell.x][cell.y] = -2
 					is_white_turn = !is_white_turn
 					gameState.is_white_turn = is_white_turn
 				playerState=SELECT_MOVE
@@ -123,7 +127,15 @@ func is_mouse_out():
 	return (get_global_mouse_position().x < 0 || get_global_mouse_position().x > (CELL_WIDTH * BOARD_SIZE)
 		||  get_global_mouse_position().y > 0 || get_global_mouse_position().y < -(CELL_WIDTH * BOARD_SIZE))
 
+func is_valid_position(pos : Vector2):
+	return pos.x >= 0 && pos.x < BOARD_SIZE && pos.y >= 0 && pos.y < BOARD_SIZE
 
+func is_white_piece(pos : Vector2):
+	return is_valid_position(pos) && gameState.board[pos.x][pos.y] > 0
+
+func is_black_piece(pos : Vector2):
+	return is_valid_position(pos) && gameState.board[pos.x][pos.y] < 0
+	
 #TODO: Indicador de jogador. Vencedor atual. Calcular possiveis açoes. ^^
 
 func is_gameover():
