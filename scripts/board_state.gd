@@ -10,11 +10,47 @@ func _init(_board: Array[Array], _is_white_turn: bool = true) -> void:
 	self.board = _board
 	self.is_white_turn = _is_white_turn
 
-func get_children() -> Array[AIState]: return []
-func get_stop_condition(): pass
-func get_current_winner(_state: AIState): pass
+func get_children() -> Array[AIState]:
+	var states: Array[AIState] = []
 
-static func get_actions(piece: Vector2) -> Array[Dictionary]: return []
+	for row in range(board.size()):
+		for col in range(board[row].size()):
+			var cell: Vector2 = Vector2(row, col)
+
+			if (is_white_turn && is_black_piece(cell)
+			|| !is_white_turn && is_white_piece(cell)
+			|| is_empty(cell)): continue
+
+			var moves = get_moves(cell)
+
+			for movement in moves:
+				var new_state = move(movement)
+				new_state.is_white_turn = !new_state.is_white_turn
+				states.append(new_state)
+
+	return states
+
+func get_stop_condition() -> bool:
+	var quantity_white = 0
+	var quantity_black = 0
+	
+	for row in board:
+		for space in row:
+			quantity_white += 1 if space > 0 else 0
+			quantity_black += 1 if space < 0 else 0
+
+	return quantity_white == 0 || quantity_black == 0
+
+func get_current_winner() -> int:
+	var quantity_white = 0
+	var quantity_black = 0
+	
+	for row in board:
+		for space in row:
+			quantity_white += 1 if space > 0 else 0
+			quantity_black += 1 if space < 0 else 0
+
+	return quantity_white - quantity_black
 
 # Validation functions =========================================================
 func is_valid_position(pos: Vector2):
@@ -59,48 +95,6 @@ func get_moves(piece: Vector2):
 		2: _moves = queen_moves(piece)
 	return _moves
 
-# func pieces_moves(piece: Vector2):
-# 	var _normal_moves: Array[Dictionary] = []
-# 	var _eating_moves: Array[Dictionary] = []
-
-# 	var white_directions = [Vector2(1, 1), Vector2(1, -1)]
-# 	var black_directions = [Vector2(-1, -1), Vector2(-1, 1)]
-# 	var directions = [Vector2(1, 1), Vector2(1, -1), Vector2(-1, 1), Vector2(-1, -1)]
-
-# 	for direction in directions:
-# 		var pos = piece
-# 		pos += direction
-		
-# 		if !is_valid_position(pos): continue
-
-# 		if is_empty(pos):
-# 			if is_white_turn && is_white_piece(piece):
-# 				if direction in white_directions:
-# 					_normal_moves.append({'initial_position': piece, 'final_position': pos, 'eaten_pieces': []})
-# 			elif !is_white_turn && is_black_piece(piece):
-# 				if direction in black_directions:
-# 					_normal_moves.append({'initial_position': piece, 'final_position': pos, 'eaten_pieces': []})
-
-# 		var _eaten_pieces = []
-# 		while is_enemy(pos):
-# 			var _eaten_piece = pos
-# 			pos += direction
-# 			if is_valid_position(pos) && is_empty(pos):
-# 				_eaten_pieces.append(_eaten_piece)
-# 				var new_board_state = move({'initial_position': piece, 'final_position': pos, 'eaten_pieces': _eaten_pieces})
-# 				var subsequent_moves = new_board_state.get_moves(pos)
-# 				if subsequent_moves.size() > 0:
-# 					for subsequent_move in subsequent_moves:
-# 						_eating_moves.append({'initial_position': piece, 'final_position': subsequent_move['final_position'], 'eaten_pieces': _eaten_pieces + subsequent_move['eaten_pieces']})
-# 				else:
-# 					_eating_moves.append({'initial_position': piece, 'final_position': pos, 'eaten_pieces': _eaten_pieces})
-# 				break
-# 			else:
-# 				break
-
-# 	return _eating_moves + _normal_moves
-
-# TODO: Fix multijump and eating pieces
 func pieces_moves(piece: Vector2, multijump: bool = false) -> Array[Dictionary]:
 	var normal_moves: Array[Dictionary] = []
 	var eating_moves: Array[Dictionary] = []
