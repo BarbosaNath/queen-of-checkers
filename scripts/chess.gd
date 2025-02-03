@@ -31,7 +31,9 @@ var is_white_turn: bool = true
 var playerState = SELECT_MOVE
 var moves: Array[Dictionary] = []
 var selected_piece: Vector2
+var winner = 0
 @export var is_against_ai: bool = true
+@export var dificulty: int = 3
 
 # Methods
 # Called when the node enters the scene tree for the first time.
@@ -99,8 +101,12 @@ func _input(event: InputEvent) -> void:
 					gameState.is_white_turn = is_white_turn
 
 					if (!is_white_turn && is_against_ai):
-						var result = Minimax.minimax(gameState, 5, false)
+						var result = Minimax.minimax(gameState, dificulty, false)
+						if (result[1] == []): return
 						gameState = result[1][0]
+						for col in range(gameState.board[0].size()):
+							if gameState.board[0][col] == -1:
+								gameState.board[0][col] =-2
 						is_white_turn = true
 						gameState.is_white_turn = true
 				playerState=SELECT_MOVE
