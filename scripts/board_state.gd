@@ -48,7 +48,9 @@ func get_current_winner() -> int:
 	for row in board:
 		for space in row:
 			quantity_white += 1 if space > 0 else 0
+			quantity_white += 4 if space > 1 else 0
 			quantity_black += 1 if space < 0 else 0
+			quantity_black += 4 if space < 1 else 0
 
 	return quantity_white - quantity_black
 

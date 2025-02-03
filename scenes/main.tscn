@@ -6,7 +6,7 @@
 
 [node name="board" parent="." instance=ExtResource("1_817an")]
 position = Vector2(1000, -1000)
-is_against_ai = false
+is_against_ai = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(1000, -1000)

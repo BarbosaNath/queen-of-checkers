@@ -102,7 +102,7 @@ func _input(event: InputEvent) -> void:
 
 					if (!is_white_turn && is_against_ai):
 						var result = Minimax.minimax(gameState, dificulty, false)
-						if (result[1] == []): return
+						# if (result[1] == []): return
 						gameState = result[1][0]
 						for col in range(gameState.board[0].size()):
 							if gameState.board[0][col] == -1:
