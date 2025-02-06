@@ -6,10 +6,33 @@
 
 [node name="board" parent="." instance=ExtResource("1_817an")]
 position = Vector2(1000, -1000)
-is_against_ai = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(1000, -1000)
 zoom = Vector2(0.25, 0.25)
 
+[node name="Control" type="Control" parent="Camera2D"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -2291.0
+offset_top = -1296.0
+offset_right = 2303.0
+offset_bottom = 1289.0
+
+[node name="Button" type="Button" parent="Camera2D/Control"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -598.0
+offset_top = 99.0
+offset_right = -98.0
+offset_bottom = 299.0
+grow_horizontal = 0
+tooltip_text = "Go back to main menu"
+theme_override_font_sizes/font_size = 60
+text = "Title Screen"
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[connection signal="pressed" from="Camera2D/Control/Button" to="board" method="_on_button_pressed"]

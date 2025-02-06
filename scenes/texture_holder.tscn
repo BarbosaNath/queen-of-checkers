@@ -1,3 +1,6 @@
-[gd_scene format=3 uid="uid://b0mr5230n63vh"]
+[gd_scene load_steps=2 format=3 uid="uid://b0mr5230n63vh"]
+
+[ext_resource type="Texture2D" uid="uid://cl63x16hivujl" path="res://assets/title_screen/bg.png" id="1_ccr44"]
 
 [node name="texture_holder" type="Sprite2D"]
+texture = ExtResource("1_ccr44")

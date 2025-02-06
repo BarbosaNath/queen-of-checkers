@@ -13,6 +13,7 @@ const BLACK_QUEEN = preload("res://assets/black_queen.png")
 const WHITE_PIECE = preload("res://assets/white_piece.png")
 const WHITE_QUEEN = preload("res://assets/white_queen.png")
 
+
 # References
 @onready var pieces = $pieces
 @onready var dots = $dots
@@ -32,8 +33,6 @@ var playerState = SELECT_MOVE
 var moves: Array[Dictionary] = []
 var selected_piece: Vector2
 var winner = 0
-@export var is_against_ai: bool = true
-@export var dificulty: int = 3
 
 # Methods
 # Called when the node enters the scene tree for the first time.
@@ -100,9 +99,9 @@ func _input(event: InputEvent) -> void:
 					is_white_turn = !is_white_turn
 					gameState.is_white_turn = is_white_turn
 
-					if (!is_white_turn && is_against_ai):
-						var result = Minimax.minimax(gameState, dificulty, false)
-						# if (result[1] == []): return
+					if (!is_white_turn && GameConfig.is_against_ai):
+						var result = Minimax.minimax(gameState, GameConfig.dificulty, false)
+						if (result[1] == []): return
 						gameState = result[1][0]
 						for col in range(gameState.board[0].size()):
 							if gameState.board[0][col] == -1:
@@ -145,5 +144,6 @@ func is_white_piece(pos : Vector2):
 
 func is_black_piece(pos : Vector2):
 	return is_valid_position(pos) && gameState.board[pos.x][pos.y] < 0
-	
-#TODO: Indicador de jogador. Vencedor atual. Calcular possiveis açoes. ^^
+
+func _on_button_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/title_screen.tscn")

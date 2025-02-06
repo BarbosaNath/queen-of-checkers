@@ -6,7 +6,6 @@
 [node name="board" type="Sprite2D"]
 texture = ExtResource("1_hqweq")
 script = ExtResource("2_17e7l")
-is_against_ai = false
 
 [node name="pieces" type="Node2D" parent="."]
 

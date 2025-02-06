@@ -1,0 +1,65 @@
+[gd_scene load_steps=4 format=3 uid="uid://cqr7lthq4eh1x"]
+
+[ext_resource type="Script" path="res://scripts/title_screen.gd" id="1_qjofd"]
+[ext_resource type="Texture2D" uid="uid://cl63x16hivujl" path="res://assets/title_screen/bg.png" id="1_x4ax8"]
+[ext_resource type="Texture2D" uid="uid://cww625h6jvwx6" path="res://assets/title_screen/logo_trans.png" id="2_kyu8j"]
+
+[node name="title_screen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_qjofd")
+
+[node name="bg" type="TextureRect" parent="."]
+layout_mode = 2
+offset_right = 1152.0
+offset_bottom = 648.0
+rotation = -0.00235749
+texture = ExtResource("1_x4ax8")
+expand_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+alignment = 1
+
+[node name="game_logo" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("2_kyu8j")
+stretch_mode = 6
+
+[node name="pvp" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Player vs Player"
+
+[node name="pvia" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Player vs IA"
+
+[node name="quit" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Quit game"
+
+[connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/pvp" to="." method="_on_pvp_pressed"]
+[connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/pvia" to="." method="_on_pvia_pressed"]
+[connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/quit" to="." method="_on_quit_pressed"]
