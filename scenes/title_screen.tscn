@@ -60,6 +60,37 @@ text = "Player vs IA"
 layout_mode = 2
 text = "Quit game"
 
+[node name="easy" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+text = "Easy"
+
+[node name="medium" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+text = "Medium"
+
+[node name="hard" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+text = "Hard"
+
+[node name="impossible" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+text = "Impossible (may cause slowdowns)"
+
+[node name="back" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Back"
+
 [connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/pvp" to="." method="_on_pvp_pressed"]
 [connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/pvia" to="." method="_on_pvia_pressed"]
 [connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/easy" to="." method="_on_easy_pressed"]
+[connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/medium" to="." method="_on_medium_pressed"]
+[connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/hard" to="." method="_on_hard_pressed"]
+[connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/impossible" to="." method="_on_impossible_pressed"]
+[connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/back" to="." method="_on_back_pressed"]
