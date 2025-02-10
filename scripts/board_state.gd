@@ -155,23 +155,24 @@ func queen_moves(piece: Vector2, multijump: bool = false, prev_eaten_pieces: Arr
 		var pos = piece + direction
 		while is_valid_position(pos):
 			if is_empty(pos):
-				if (!multijump)
+				if (!multijump):
 					normal_moves.append({
 						'initial_position': piece,
 						'final_position': pos,
 						'eaten_pieces': [],
 					})
-				eating_moves.append({
-					'initial_position': piece,
-					'final_position': pos,
-					'eaten_pieces': prev_eaten_pieces,
-				})
+				else: 
+					eating_moves.append({
+						'initial_position': piece,
+						'final_position': pos,
+						'eaten_pieces': prev_eaten_pieces,
+					})
 
 
 			elif is_enemy(pos):
 				var eat_pos = pos + direction
 				if is_valid_position(eat_pos) and is_empty(eat_pos):
-					var eaten_pieces = [pos]
+					var eaten_pieces = [pos] + prev_eaten_pieces
 					
 					eating_moves.append({
 						'initial_position': piece,
