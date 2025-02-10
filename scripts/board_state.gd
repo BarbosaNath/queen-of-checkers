@@ -145,11 +145,16 @@ func pieces_moves(piece: Vector2, multijump: bool = false) -> Array[Dictionary]:
 	return eating_moves if eating_moves.size() > 0 else normal_moves
 
 
-func queen_moves(piece: Vector2, multijump: bool = false, prev_eaten_pieces: Array[Dictionary]= []):
+func queen_moves(
+	piece: Vector2, 
+	multijump: bool = false,
+	prev_eaten_pieces: Array = [], 
+	last_direction: Vector2 = Vector2.ZERO
+	):
 	var normal_moves: Array[Dictionary] = []
 	var eating_moves: Array[Dictionary] = []
 
-	var directions = [Vector2(1, 1), Vector2(1, -1), Vector2(-1, 1), Vector2(-1, -1)]
+	var directions: Array[Vector2] = [Vector2(1, 1), Vector2(1, -1), Vector2(-1, 1), Vector2(-1, -1)]
 
 	for direction in directions:
 		var pos = piece + direction
@@ -161,7 +166,7 @@ func queen_moves(piece: Vector2, multijump: bool = false, prev_eaten_pieces: Arr
 						'final_position': pos,
 						'eaten_pieces': [],
 					})
-				else: 
+				elif (direction == last_direction): 
 					eating_moves.append({
 						'initial_position': piece,
 						'final_position': pos,
@@ -185,11 +190,12 @@ func queen_moves(piece: Vector2, multijump: bool = false, prev_eaten_pieces: Arr
 						'final_position': eat_pos,
 						'eaten_pieces': eaten_pieces
 					});
-					var multijump_moves = multijump_state.queen_moves(eat_pos, true, eaten_pieces)
+					var multijump_moves = multijump_state.queen_moves(eat_pos, true, eaten_pieces, direction)
 					for movement in multijump_moves:
 						movement['initial_position'] = piece
 						movement['eaten_pieces'] += eaten_pieces
 					eating_moves = multijump_moves + eating_moves
+			else: break
 			pos = pos + direction
 					
 				
