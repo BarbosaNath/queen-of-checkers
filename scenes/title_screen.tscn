@@ -14,12 +14,15 @@ grow_vertical = 2
 script = ExtResource("1_qjofd")
 
 [node name="bg" type="TextureRect" parent="."]
-layout_mode = 2
-offset_right = 1152.0
-offset_bottom = 648.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 rotation = -0.00235749
 texture = ExtResource("1_x4ax8")
-expand_mode = 2
+expand_mode = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
