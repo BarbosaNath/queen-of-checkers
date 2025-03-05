@@ -124,10 +124,11 @@ func show_dots():
 		dot.apply_scale(Vector2(DOTS_SCALE,DOTS_SCALE))
 		dot.global_position = Vector2(move['final_position'].y * CELL_WIDTH + (CELL_WIDTH / 2.0), -move['final_position'].x * CELL_WIDTH - (CELL_WIDTH / 2.0))
 		dot.texture = WHITE_PIECE if gameState.is_white_turn else BLACK_PIECE
+		dot.spawn()
 
 func delete_dots():
 	for dot in dots.get_children():
-		dot.queue_free()
+		dot.die()
 
 func is_mouse_out():
 	return (get_global_mouse_position().x < 0 || get_global_mouse_position().x > (CELL_WIDTH * BOARD_SIZE)
