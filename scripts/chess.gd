@@ -28,7 +28,6 @@ enum {
 }
 
 var gameState: BoardState
-var is_white_turn: bool = true
 var playerState = SELECT_MOVE
 var moves: Array[Dictionary] = []
 var selected_piece: Vector2
@@ -82,8 +81,8 @@ func _input(event: InputEvent) -> void:
 			var cell = Vector2(cell_y, cell_x)
 
 			if playerState==SELECT_MOVE:
-				if (is_white_turn && is_white_piece(cell) 
-				|| !is_white_turn && is_black_piece(cell)):
+				if (gameState.is_white_turn && gameState.is_white_piece(cell) 
+				|| !gameState.is_white_turn && gameState.is_black_piece(cell)):
 					selected_piece = cell
 					show_options()
 					playerState = CONFIRM_MOVE
@@ -96,17 +95,15 @@ func _input(event: InputEvent) -> void:
 						gameState.board[cell.x][cell.y] = 2
 					elif (cell_y == 0 && gameState.is_black_piece(cell)):
 						gameState.board[cell.x][cell.y] = -2
-					is_white_turn = !is_white_turn
-					gameState.is_white_turn = is_white_turn
+					gameState.is_white_turn = !gameState.is_white_turn
 
-					if (!is_white_turn && GameConfig.is_against_ai):
+					if (!gameState.is_white_turn && GameConfig.is_against_ai):
 						var result = Minimax.minimax(gameState, GameConfig.dificulty, false)
 						if (result[1] == []): return
 						gameState = result[1][0]
 						for col in range(gameState.board[0].size()):
 							if gameState.board[0][col] == -1:
 								gameState.board[0][col] =-2
-						is_white_turn = true
 						gameState.is_white_turn = true
 				playerState=SELECT_MOVE
 				display_board()
@@ -126,7 +123,7 @@ func show_dots():
 		dots.add_child(dot)
 		dot.apply_scale(Vector2(DOTS_SCALE,DOTS_SCALE))
 		dot.global_position = Vector2(move['final_position'].y * CELL_WIDTH + (CELL_WIDTH / 2.0), -move['final_position'].x * CELL_WIDTH - (CELL_WIDTH / 2.0))
-		dot.texture = WHITE_PIECE if is_white_turn else BLACK_PIECE
+		dot.texture = WHITE_PIECE if gameState.is_white_turn else BLACK_PIECE
 
 func delete_dots():
 	for dot in dots.get_children():
@@ -135,15 +132,6 @@ func delete_dots():
 func is_mouse_out():
 	return (get_global_mouse_position().x < 0 || get_global_mouse_position().x > (CELL_WIDTH * BOARD_SIZE)
 		||  get_global_mouse_position().y > 0 || get_global_mouse_position().y < -(CELL_WIDTH * BOARD_SIZE))
-
-func is_valid_position(pos : Vector2):
-	return pos.x >= 0 && pos.x < BOARD_SIZE && pos.y >= 0 && pos.y < BOARD_SIZE
-
-func is_white_piece(pos : Vector2):
-	return is_valid_position(pos) && gameState.board[pos.x][pos.y] > 0
-
-func is_black_piece(pos : Vector2):
-	return is_valid_position(pos) && gameState.board[pos.x][pos.y] < 0
 
 func _on_button_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/title_screen.tscn")
