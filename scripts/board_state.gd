@@ -88,7 +88,7 @@ func move(movement: Dictionary) -> BoardState:
 static func get_move_by_position(moves: Array[Dictionary], pos: Vector2):
 	for movement in moves:
 		if (movement['final_position'] == pos): return movement
-	return []
+	return null
 
 func get_moves(piece: Vector2):
 	var _moves: Array[Dictionary] = []
