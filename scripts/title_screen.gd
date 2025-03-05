@@ -1,14 +1,15 @@
 extends Control
 
-@onready var easy: Button = $MarginContainer/HBoxContainer/VBoxContainer/easy
-@onready var medium: Button = $MarginContainer/HBoxContainer/VBoxContainer/medium
-@onready var hard: Button = $MarginContainer/HBoxContainer/VBoxContainer/hard
-@onready var impossible: Button = $MarginContainer/HBoxContainer/VBoxContainer/impossible
-@onready var back: Button = $MarginContainer/HBoxContainer/VBoxContainer/back
+@onready var easy: Button = $VBoxContainer/easy
+@onready var medium: Button = $VBoxContainer/medium
+@onready var hard: Button = $VBoxContainer/hard
+@onready var impossible: Button = $VBoxContainer/impossible
+@onready var margin_container: MarginContainer = $VBoxContainer/MarginContainer
+@onready var back: Button = $VBoxContainer/MarginContainer/back
 
-@onready var pvp: Button = $MarginContainer/HBoxContainer/VBoxContainer/pvp
-@onready var pvia: Button = $MarginContainer/HBoxContainer/VBoxContainer/pvia
-@onready var quit: Button = $MarginContainer/HBoxContainer/VBoxContainer/quit
+@onready var pvp: Button = $VBoxContainer/pvp
+@onready var pvia: Button = $VBoxContainer/pvia
+@onready var quit: Button = $VBoxContainer/quit
 
 @onready var main_buttons: Array[Button] = [pvp, pvia, quit]
 @onready var dificulty_buttons: Array[Button] = [easy, medium, hard, impossible, back]
@@ -23,6 +24,7 @@ func _on_pvia_pressed() -> void:
 	for button in main_buttons:
 		button.visible = false
 		
+	margin_container.visible = true
 	for button in dificulty_buttons:
 		button.visible = true
 		
@@ -54,5 +56,6 @@ func _on_back_pressed() -> void:
 	for button in main_buttons:
 		button.visible = true
 		
+	margin_container.visible = false
 	for button in dificulty_buttons:
 		button.visible = false
