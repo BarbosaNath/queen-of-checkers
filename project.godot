@@ -19,6 +19,14 @@ config/icon="res://icon.svg"
 
 GameConfig="*res://scripts/game_config.gd"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/script-ide/plugin.cfg")
+
+[gui]
+
+theme/default_font_antialiasing=2
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
