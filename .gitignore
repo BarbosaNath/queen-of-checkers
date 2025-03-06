@@ -2,5 +2,6 @@
 .godot/
 /android/
 .vscode/
+dist/
 
 *.tmp
