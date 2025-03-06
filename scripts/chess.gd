@@ -15,9 +15,9 @@ const WHITE_QUEEN = preload("res://assets/white_queen.png")
 
 
 # References
-@onready var pieces = $pieces
-@onready var dots = $dots
-@onready var turn = $turn
+@onready var pieces: Node2D = $pieces
+@onready var dots: Node2D = $dots
+@onready var tmp_pieces: Node2D = $tmp_pieces
 
 # Variables
 # -num(black) 0 +num(white)
@@ -53,22 +53,22 @@ func start_board() -> void:
 	gameState = BoardState.new(board_array)
 
 func display_board():
-	for child in pieces.get_children():
-		child.queue_free()
+	for piece in pieces.get_children():
+		piece.queue_free()
 
 	for i in BOARD_SIZE:
 		for j in BOARD_SIZE:
-			var holder = TEXTURE_HOLDER.instantiate()
-			pieces.add_child(holder)
-			holder.apply_scale(Vector2(PIECES_SCALE, PIECES_SCALE))
-			holder.global_position = Vector2(j * CELL_WIDTH + (CELL_WIDTH / 2.0), -i * CELL_WIDTH - (CELL_WIDTH / 2.0))
+			var piece = TEXTURE_HOLDER.instantiate()
+			pieces.add_child(piece)
+			piece.apply_scale(Vector2(PIECES_SCALE, PIECES_SCALE))
+			piece.global_position = Vector2(j * CELL_WIDTH + (CELL_WIDTH / 2.0), -i * CELL_WIDTH - (CELL_WIDTH / 2.0))
 					
 			match gameState.board[i][j]:
-				1: holder.texture = WHITE_PIECE
-				-1: holder.texture = BLACK_PIECE
-				2: holder.texture = WHITE_QUEEN
-				-2: holder.texture = BLACK_QUEEN
-				_: holder.texture = null
+				1: piece.texture = WHITE_PIECE
+				-1: piece.texture = BLACK_PIECE
+				2: piece.texture = WHITE_QUEEN
+				-2: piece.texture = BLACK_QUEEN
+				_: piece.texture = null
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton && event.is_pressed():
@@ -91,7 +91,9 @@ func _input(event: InputEvent) -> void:
 
 				if movement != null:
 					gameState = gameState.move(movement)
-
+					
+					animate_eaten_pieces(!gameState.is_white_turn)
+					
 					if (cell_y == 7 && gameState.is_white_piece(cell)):
 						gameState.board[cell.x][cell.y] = 2
 					elif (cell_y == 0 && gameState.is_black_piece(cell)):
@@ -106,6 +108,18 @@ func _input(event: InputEvent) -> void:
 				display_board()
 				delete_dots()
 
+func animate_eaten_pieces(are_white_pieces: bool):
+	for eaten_piece in gameState.previous_move['eaten_pieces']:
+		var tmp_animation_piece = TEXTURE_HOLDER.instantiate()
+		tmp_pieces.add_child(tmp_animation_piece)
+		tmp_animation_piece.apply_scale(Vector2(PIECES_SCALE, PIECES_SCALE))
+		tmp_animation_piece.global_position = Vector2(
+			 eaten_piece.y * CELL_WIDTH + (CELL_WIDTH / 2.0),
+			-eaten_piece.x * CELL_WIDTH - (CELL_WIDTH / 2.0)
+		)
+		tmp_animation_piece.texture = WHITE_PIECE if are_white_pieces else BLACK_PIECE
+		tmp_animation_piece.die()
+
 func ai_action():
 	var result = Minimax.minimax(gameState, GameConfig.dificulty, false)
 	if (result[1] == []): return
@@ -114,6 +128,7 @@ func ai_action():
 		if gameState.board[0][col] == -1:
 			gameState.board[0][col] = -2
 	gameState.is_white_turn = true
+	animate_eaten_pieces(true)
 
 func show_options():
 	moves = gameState.get_moves(selected_piece)

@@ -5,10 +5,12 @@ const BOARD_SIZE = 8
 
 var board: Array[Array]
 var is_white_turn: bool
+var previous_move: Dictionary
 
-func _init(_board: Array[Array], _is_white_turn: bool = true) -> void:
+func _init(_board: Array[Array], _is_white_turn: bool = true, _previous_move: Dictionary = {}) -> void:
 	self.board = _board
 	self.is_white_turn = _is_white_turn
+	self.previous_move = _previous_move
 
 func get_children() -> Array[AIState]:
 	var states: Array[AIState] = []
@@ -83,7 +85,7 @@ func move(movement: Dictionary) -> BoardState:
 	new_board[final_position.x][final_position.y] = new_board[initial_position.x][initial_position.y]
 	new_board[initial_position.x][initial_position.y] = 0
 
-	return BoardState.new(new_board, is_white_turn)
+	return BoardState.new(new_board, is_white_turn, movement)
 
 static func get_move_by_position(moves: Array[Dictionary], pos: Vector2):
 	for movement in moves:

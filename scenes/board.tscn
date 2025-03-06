@@ -7,6 +7,8 @@
 texture = ExtResource("1_hqweq")
 script = ExtResource("2_17e7l")
 
+[node name="tmp_pieces" type="Node2D" parent="."]
+
 [node name="pieces" type="Node2D" parent="."]
 
 [node name="dots" type="Node2D" parent="."]
