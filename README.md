@@ -1,12 +1,12 @@
-#Queen of Checkers
+Queen of Checkers
 
 
 
-##Sobre o Projeto
+Sobre o Projeto
 
 Queen of Checkers foi um jogo criado para um trabalho da disciplina de Inteligência Artificial, onde desenvolvemos o jogo do zero utilizando a Godot Engine e o algoritmo Minimax para a lógica das jogadas da IA.
 
-##Funcionalidades
+Funcionalidades
 
 Jogo de damas clássico com regras oficiais
 
