@@ -1,38 +1,38 @@
-Queen of Checkers
+# Queen of Checkers
 
 
 
-Sobre o Projeto
+## Sobre o Projeto
 
 Queen of Checkers foi um jogo criado para um trabalho da disciplina de Inteligência Artificial, onde desenvolvemos o jogo do zero utilizando a Godot Engine e o algoritmo Minimax para a lógica das jogadas da IA.
 
-Funcionalidades
+## Funcionalidades
 
-Jogo de damas clássico com regras oficiais
+- Jogo de damas clássico com regras oficiais
 
-Interface intuitiva e responsiva
+- Interface intuitiva e responsiva
 
-Suporte para partidas entre dois jogadores
+- Suporte para partidas entre dois jogadores
 
-Escolha do nivel de dificuldade para os jogos contra a IA
+- Escolha do nivel de dificuldade para os jogos contra a IA
 
 
-Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
-Engine: Godot Engine
+- Engine: Godot Engine
 
-Linguagem: GDScript (linguagem nativa da Godot)
+- Linguagem: GDScript (linguagem nativa da Godot)
 
-Controle de Versão: Git & GitHub
+- Controle de Versão: Git & GitHub
 
-Como Executar o Projeto
+## Como Executar o Projeto
 
-Jogar Online
+### Jogar Online
 
 O jogo pode ser acessado diretamente pelo link:
 Itch.io (link será disponibilizado em breve)
 
-Jogar na Própria Máquina
+### Jogar na Própria Máquina
 
 # Clone este repositório
 git clone https://github.com/BarbosaNath/queen-of-checkers.git
