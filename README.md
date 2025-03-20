@@ -32,7 +32,7 @@ Queen of Checkers é um jogo de damas criado como trabalho da disciplina de Inte
 ### Jogar Online
 
 O jogo pode ser acessado diretamente pelo link:
-Itch.io (link será disponibilizado em breve)
+> https://maikishiti.itch.io/queen-of-checkers
 
 
 ### Jogar na Própria Máquina
