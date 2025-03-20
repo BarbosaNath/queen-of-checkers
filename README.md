@@ -25,14 +25,18 @@ Queen of Checkers foi um jogo criado para um trabalho da disciplina de Inteligê
 
 - Controle de Versão: Git & GitHub
 
+
 # Como Executar o Projeto
+
 
 ### Jogar Online
 
 O jogo pode ser acessado diretamente pelo link:
 Itch.io (link será disponibilizado em breve)
 
+
 ### Jogar na Própria Máquina
+
 
 ## Clone este repositório
 ```
@@ -40,16 +44,21 @@ git clone https://github.com/BarbosaNath/queen-of-checkers
 ```
 
 #### Instale a Godot Engine (caso ainda não tenha)
+
 ### Baixe em: https://godotengine.org/download
 
 ## Abra o projeto na Godot Engine
+
 ## Execute o jogo diretamente pelo editor
+
+
 
 # Contribuindo
 
 Contribuições são bem-vindas! Se deseja contribuir:
 
 ## Faça um fork do projeto
+
 ## Crie um branch para sua funcionalidade
 ```
 git checkout -b minha-feature
@@ -67,14 +76,18 @@ git push origin minha-feature
 
 ## Abra um Pull Request
 
+
+
 # Licença
 
 Este projeto está sob a licença Commons Clause.
 
-#Desenvolvedores
+
+
+# Desenvolvedores
 
 O projeto foi desenvolvido por:
 
-- Breno Lima - GitHub
+- Breno Lima - (https://github.com/BrenoLima54)
 
-- Matheus Barbosa - GitHub
+- Matheus Barbosa - (https://github.com/BarbosaNath)
