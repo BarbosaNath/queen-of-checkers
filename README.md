@@ -4,7 +4,7 @@
 
 ## Sobre o Projeto
 
-Queen of Checkers foi um jogo criado para um trabalho da disciplina de Inteligência Artificial, onde desenvolvemos o jogo do zero utilizando a Godot Engine e o algoritmo Minimax para a lógica das jogadas da IA.
+Queen of Checkers é um jogo de damas criado como trabalho da disciplina de Inteligência Artificial, onde desenvolvemos o projeto do zero utilizando a Godot Engine e o algoritmo Minimax para a lógica das jogadas da IA.
 
 ## Funcionalidades
 
@@ -26,7 +26,7 @@ Queen of Checkers foi um jogo criado para um trabalho da disciplina de Inteligê
 - Controle de Versão: Git & GitHub
 
 
-# Como Executar o Projeto
+## Como Executar o Projeto
 
 
 ### Jogar Online
@@ -36,58 +36,58 @@ Itch.io (link será disponibilizado em breve)
 
 
 ### Jogar na Própria Máquina
+Em breve...
 
-
-## Clone este repositório
+### Modificando e Executando o Código Fonte
+Clone este repositório
 ```
 git clone https://github.com/BarbosaNath/queen-of-checkers
 ```
 
-#### Instale a Godot Engine (caso ainda não tenha)
+Instale a **Godot Engine** (caso ainda não tenha)
+> Baixe em: https://godotengine.org/download
 
-### Baixe em: https://godotengine.org/download
+Abra o projeto na Godot Engine
 
-## Abra o projeto na Godot Engine
-
-## Execute o jogo diretamente pelo editor
-
+Modifique ou execute o jogo diretamente pelo editor
 
 
-# Contribuindo
 
-Contribuições são bem-vindas! Se deseja contribuir:
+## Contribuindo
 
-## Faça um fork do projeto
+Contribuições são sempre bem-vindas!
+Se deseja contribuir:
 
-## Crie um branch para sua funcionalidade
+Faça um fork do projeto
+
+Crie um branch para sua funcionalidade
 ```
 git checkout -b minha-feature
 ```
 
-## Faça commit das suas alterações
+Faça commit das suas alterações
 ```
-git commit -m 'Adicionando nova feature'
+git commit -m 'feat: add new feature'
 ```
 
-## Envie para o repositório remoto
+Envie para o repositório remoto
 ```
 git push origin minha-feature
 ```
 
-## Abra um Pull Request
+Abra um Pull Request
 
 
 
-# Licença
+## Licença
 
-Este projeto está sob a licença Commons Clause.
+Este projeto está sob a licença Creative Commons.
 
 
 
-# Desenvolvedores
+## Desenvolvedores
 
 O projeto foi desenvolvido por:
 
 - Breno Lima - (https://github.com/BrenoLima54)
-
 - Matheus Barbosa - (https://github.com/BarbosaNath)
